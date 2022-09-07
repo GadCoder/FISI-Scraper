@@ -23,7 +23,7 @@ def check_under_news():
     if check_under_posts():
         return {"Nueva noticia en under"}
     else:
-        return {"No hay nueva noticia en main"}
+        return {"No hay nueva noticia en under"}
 
 
 @app.get("/get_newest_main_news")
