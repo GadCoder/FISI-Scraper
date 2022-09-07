@@ -12,18 +12,23 @@ def hello_api():
 
 @app.get("/check_main_news")
 def check_main_news():
-    return check_main_posts()
+    if check_main_posts():
+        return {"Nueva noticia en main"}
+    else:
+        return {"No hay nueva noticia en main"}
 
 
 @app.get("/check_under_news")
 def check_under_news():
-    return check_under_posts()
+    if check_under_posts():
+        return {"Nueva noticia en under"}
+    else:
+        return {"No hay nueva noticia en main"}
 
 
 @app.get("/get_newest_news")
 def get_newests_news():
     return get_news("newest_post")
-
 
 @app.get("/get_last_news")
 def get_last_news():
