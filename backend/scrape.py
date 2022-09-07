@@ -71,6 +71,15 @@ def check_main_posts():
     check_last_post("backend/main_posts.json", first_slide_json)
 
 
+def get_main_news(type):
+    main_posts = read_json("backend/main_posts.json")
+    return main_posts[type],
+
+def get_under_news(type):
+    under_posts = read_json("backend/under_posts.json")
+    return under_posts[type],
+
+
 def get_news(type):
     main_posts = read_json("backend/main_posts.json")
     under_posts = read_json("backend/under_posts.json")
