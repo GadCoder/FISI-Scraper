@@ -56,6 +56,7 @@ def check_under_posts():
     title = remove_spaces_from_tittle(first_post.text)
     url = fisi_url + first_post['href']
     first_post_json = transform_post_to_json(title, url)
+    print(f"First post on under: {first_post_json}")
     check_last_post("backend/under_posts.json", first_post_json)
 
 
@@ -68,6 +69,7 @@ def check_main_posts():
     title = remove_spaces_from_tittle(first_slide.text)
     url = fisi_url + first_slide.find("a")['href']
     first_slide_json = transform_post_to_json(title, url)
+    print(f"First slide on main: {first_slide_json}")
     check_last_post("backend/main_posts.json", first_slide_json)
 
 
