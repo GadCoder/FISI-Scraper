@@ -1,9 +1,8 @@
-
 import json
 import requests
 from bs4 import BeautifulSoup
 
-fisi_url = "https://sistemas.unmsm.edu.pe/site/"
+FISI_URL = "https://sistemas.unmsm.edu.pe"
 
 
 def remove_spaces_from_tittle(title):
@@ -15,7 +14,8 @@ def remove_spaces_from_tittle(title):
 
 
 def read_json(path):
-    return json.load(open(path))
+    with open(path) as json_file:
+        return json.load(json_file)
 
 
 def write_json(path, newest_post, last_post):
@@ -47,46 +47,39 @@ def check_last_post(json_path, post):
             return True
 
 
-def check_under_posts():
-    page = requests.get(fisi_url, verify=False)
+def create_soup():
+    page = requests.get(FISI_URL, verify=False)
     soup = BeautifulSoup(page.content, "html.parser")
+    return soup
+
+
+def check_under_posts():
+    soup = create_soup()
     news_items = soup.find_all("div", class_="mfp_carousel_item")
     news_list = [item.find("h4", class_="mfp_carousel_title").find("a") for item in news_items]
     first_post = news_list[0]
     title = remove_spaces_from_tittle(first_post.text)
-    url = fisi_url + first_post['href']
+    url = FISI_URL + first_post['href']
     first_post_json = transform_post_to_json(title, url)
-    print(f"First post on under: {first_post_json}")
-    check_last_post("backend/under_posts.json", first_post_json)
+    return check_last_post("backend/under_posts.json", first_post_json)
 
 
 def check_main_posts():
-    page = requests.get(fisi_url, verify=False)
-    soup = BeautifulSoup(page.content, "html.parser")
+    soup = create_soup()
     carousel = soup.find("div", id="Youdeveloperslider").find("div", class_="elements")
     slides = carousel.find_all("div", class_="slide")
     first_slide = slides[0].find("div", class_="title")
     title = remove_spaces_from_tittle(first_slide.text)
-    url = fisi_url + first_slide.find("a")['href']
+    url = FISI_URL + first_slide.find("a")['href']
     first_slide_json = transform_post_to_json(title, url)
-    print(f"First slide on main: {first_slide_json}")
-    check_last_post("backend/main_posts.json", first_slide_json)
+    return check_last_post("backend/main_posts.json", first_slide_json)
 
 
-def get_main_news(type):
-    main_posts = read_json("backend/main_posts.json")
-    return main_posts[type],
-
-def get_under_news(type):
-    under_posts = read_json("backend/under_posts.json")
-    return under_posts[type],
+def get_main_news():
+    return read_json("backend/main_posts.json")
 
 
-def get_news(type):
-    main_posts = read_json("backend/main_posts.json")
-    under_posts = read_json("backend/under_posts.json")
+def get_under_news():
+    return read_json("backend/under_posts.json")
 
-    return {
-        "main_posts": main_posts[type],
-        "under_posts": under_posts[type]
-    }
+
