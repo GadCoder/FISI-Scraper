@@ -19,22 +19,55 @@ def check_if_jsons_exits():
             print("Creando under_posts.json")
 
 
-def update_news():
-    if check_under_posts():
-        new_under_post = get_under_news()
-        telegram_bot_send_message(f'{get_current_time()}: Nueva noticia principal')
-        telegram_bot_send_message(f"Título: {new_under_post['newest_post']['title']}")
-        telegram_bot_send_message(f"Enlace: {new_under_post['newest_post']['url']}")
+def check_last_update(is_under_news):
+    txt_path = "backend/last_update.txt"
+    current_time = datetime.now().strftime("%H")
+    if not os.path.exists(txt_path):
+        with open(txt_path, "w") as f:
+            print("Creating txt update time")
+            f.write(current_time)
+            return True
+    with open(txt_path, "r") as f:
+        last_update_time = int(f.readline())
+        f.close()
+    if abs(int(current_time) - last_update_time) > 1:
+        if is_under_news:
+            with open(txt_path, "w") as f:
+                f.write(current_time)
+                f.close()
+        return True
     else:
-        telegram_bot_send_message(f"{get_current_time()}: No hay noticias principales nuevas")
+        return False
 
+
+def update_news():
+    # Noticias principales
     if check_main_posts():
         new_main_post = get_main_news()
-        telegram_bot_send_message(f"{get_current_time()}: Nueva noticia secundaria")
-        telegram_bot_send_message(f"Título: {new_main_post['newest_post']['title']}")
-        telegram_bot_send_message(f"Enlace: {new_main_post['newest_post']['url']}")
-    else:
-        telegram_bot_send_message(f"{get_current_time()}: No hay noticias secundarias nuevas")
+        telegram_bot_send_message(
+            f"{get_current_time()}: Nueva noticia principal")
+        telegram_bot_send_message(
+            f"Título: {new_main_post['newest_post']['title']}")
+        telegram_bot_send_message(
+            f"Enlace: {new_main_post['newest_post']['url']}")
+    elif check_last_update(False):
+        telegram_bot_send_message(
+            f"{get_current_time()}: No hay noticias principales nuevas",
+            isPersonal=True)
+
+    # Noticias secundarias
+    if check_under_posts():
+        new_under_post = get_under_news()
+        telegram_bot_send_message(
+            f'{get_current_time()}: Nueva noticia secundaria')
+        telegram_bot_send_message(
+            f"Título: {new_under_post['newest_post']['title']}")
+        telegram_bot_send_message(
+            f"Enlace: {new_under_post['newest_post']['url']}")
+    elif check_last_update(True):
+        telegram_bot_send_message(
+            f"{get_current_time()}: No hay noticias principales secundaria",
+            isPersonal=True)
 
 
 def main():
