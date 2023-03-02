@@ -10,6 +10,8 @@ def remove_spaces_from_tittle(title):
     letters = [letter for letter in title if (letter not in trash_characters)]
     while letters[0] == " ":
         letters.pop(0)
+    while letters[-1] == " ":
+        letters.pop(-1)
     return ''.join(letters)
 
 
