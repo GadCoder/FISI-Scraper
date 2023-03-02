@@ -1,9 +1,14 @@
 import requests
+import random
 
 
-TOKEN = ""
-CHAT_ID = ""
-GROUP_CHAT_ID = ""
+TOKEN = "5907691902:AAEzElCtv5ooMEugKofP7k_JIUDvkv4OIe4"
+CHAT_ID = "1446179367"
+GROUP_CHAT_ID = "-1001800110316"
+
+def get_animal_emoji():
+    emojis = ["🐰", "🐭", "🐱", "🐶", "🦊", "🐹", "🐻", "🐼", "🐸", "🐵", "🐷", "🐧", "🐨"]
+    return random.choice(emojis)
 
 
 def telegram_bot_send_message(bot_message, isPersonal=False):

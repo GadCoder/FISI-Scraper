@@ -1,7 +1,12 @@
 import os
+import shutil
+import random
 from datetime import datetime
 from backend.scrape import check_main_posts, check_under_posts, get_main_news, get_under_news
 from backend.telegram import telegram_bot_send_message
+
+
+FILES_PATH = "/fisi-scrapper/"
 
 
 def get_current_time():
@@ -10,17 +15,32 @@ def get_current_time():
     return current_time
 
 
+def get_animal_emoji():
+    emojis = ["🐰", "🐭", "🐱", "🐶", "🦊", "🐹", "🐻", "🐼", "🐸", "🐵", "🐷", "🐧", "🐨", "🦦", "🦔"]
+    return random.choice(emojis)
+
+def is_daytime():
+    now = datetime.now()
+    current_time = int(now.strftime("%H"))
+    if current_time >= 0 and current_time <6:
+        return False
+    return True
+
 def check_if_jsons_exits():
-    if not os.path.exists("backend/main_posts.json"):
-        with open("backend/main_posts.json", 'w') as f:
-            print("Creando main_posts.json")
-    if not os.path.exists("backend/under_posts.json"):
-        with open("backend/under_posts.json", 'w') as f:
-            print("Creando under_posts.json")
+    if not os.path.exists(FILES_PATH + "main_posts.json"):
+        shutil.copyfile("backend/main_posts.json",
+                        FILES_PATH + "main_posts.json")
+        # with open(FILES_PATH + "main_posts.json", 'w') as f:
+        print("Creando main_posts.json")
+    if not os.path.exists(FILES_PATH + "under_posts.json"):
+        shutil.copyfile("backend/under_posts.json",
+                        FILES_PATH + "under_posts.json")
+       # with open(FILES_PATH + "under_posts.json", 'w') as f:
+        print("Creando under_posts.json")
 
 
 def check_last_update(is_under_news):
-    txt_path = "backend/last_update.txt"
+    txt_path = FILES_PATH + "last_update.txt"
     current_time = datetime.now().strftime("%H")
     if not os.path.exists(txt_path):
         with open(txt_path, "w") as f:
@@ -44,35 +64,28 @@ def update_news():
     # Noticias principales
     if check_main_posts():
         new_main_post = get_main_news()
+        telegram_bot_send_message(f"{get_current_time()}: Nueva noticia principal")
         telegram_bot_send_message(
-            f"{get_current_time()}: Nueva noticia principal")
-        telegram_bot_send_message(
-            f"Título: {new_main_post['newest_post']['title']}")
-        telegram_bot_send_message(
-            f"Enlace: {new_main_post['newest_post']['url']}")
+            f"*{new_main_post['newest_post']['title']}* {get_animal_emoji()}\n🔗*Enlace*: {new_main_post['newest_post']['url']}"
+            )
     elif check_last_update(False):
-        telegram_bot_send_message(
-            f"{get_current_time()}: No hay noticias principales nuevas",
-            isPersonal=True)
+        telegram_bot_send_message(f"{get_current_time()}: No hay noticias principales nuevas ☹️", isPersonal=True)
 
     # Noticias secundarias
     if check_under_posts():
         new_under_post = get_under_news()
+        telegram_bot_send_message(f"{get_current_time()}: Nueva noticia secundaria")
         telegram_bot_send_message(
-            f'{get_current_time()}: Nueva noticia secundaria')
-        telegram_bot_send_message(
-            f"Título: {new_under_post['newest_post']['title']}")
-        telegram_bot_send_message(
-            f"Enlace: {new_under_post['newest_post']['url']}")
+            f"*{new_under_post['newest_post']['title']}* {get_animal_emoji()}\n🔗*Enlace*: {new_under_post['newest_post']['url']}"
+            )
     elif check_last_update(True):
-        telegram_bot_send_message(
-            f"{get_current_time()}: No hay noticias principales secundaria",
-            isPersonal=True)
+        telegram_bot_send_message(f"{get_current_time()}: No hay noticias principales secundarias ☹️", isPersonal=True)
 
 
 def main():
-    check_if_jsons_exits()
-    update_news()
+    if is_daytime():
+        check_if_jsons_exits()
+        update_news()
 
 
 if __name__ == "__main__":

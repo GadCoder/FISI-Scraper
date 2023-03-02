@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 
 FISI_URL = "https://sistemas.unmsm.edu.pe"
-
+FILES_PATH = "/fisi-scrapper/"
 
 def remove_spaces_from_tittle(title):
     trash_characters = ['\n', '\r', '\t', ]
@@ -61,7 +61,7 @@ def check_under_posts():
     title = remove_spaces_from_tittle(first_post.text)
     url = FISI_URL + first_post['href']
     first_post_json = transform_post_to_json(title, url)
-    return check_last_post("backend/under_posts.json", first_post_json)
+    return check_last_post(FILES_PATH + "under_posts.json", first_post_json)
 
 
 def check_main_posts():
@@ -72,14 +72,13 @@ def check_main_posts():
     title = remove_spaces_from_tittle(first_slide.text)
     url = FISI_URL + first_slide.find("a")['href']
     first_slide_json = transform_post_to_json(title, url)
-    return check_last_post("backend/main_posts.json", first_slide_json)
-
+    return check_last_post(FILES_PATH + "main_posts.json", first_slide_json)
 
 def get_main_news():
-    return read_json("backend/main_posts.json")
+    return read_json(FILES_PATH + "main_posts.json")
 
 
 def get_under_news():
-    return read_json("backend/under_posts.json")
+    return read_json(FILES_PATH + "under_posts.json")
 
 
