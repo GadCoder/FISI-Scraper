@@ -11,7 +11,7 @@ def get_animal_emoji():
     return random.choice(emojis)
 
 
-def telegram_bot_send_message(bot_message, isPersonal=False):
+def telegram_bot_send_message(bot_message, isPersonal=True):
     bot_token = TOKEN
     bot_chatID = CHAT_ID if isPersonal else GROUP_CHAT_ID
     send_text = 'https://api.telegram.org/bot' + bot_token + \

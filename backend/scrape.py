@@ -3,13 +3,15 @@ import requests
 from bs4 import BeautifulSoup
 
 FISI_URL = "https://sistemas.unmsm.edu.pe"
-FILES_PATH = "/fisi-scrapper/"
+FILES_PATH = "backend/"
 
 def remove_spaces_from_tittle(title):
     trash_characters = ['\n', '\r', '\t', ]
     letters = [letter for letter in title if (letter not in trash_characters)]
     while letters[0] == " ":
         letters.pop(0)
+    while letters[-1] == " ":
+        letters.pop(-1)
     return ''.join(letters)
 
 

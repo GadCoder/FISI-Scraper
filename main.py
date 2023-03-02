@@ -6,7 +6,7 @@ from backend.scrape import check_main_posts, check_under_posts, get_main_news, g
 from backend.telegram import telegram_bot_send_message
 
 
-FILES_PATH = "/fisi-scrapper/"
+FILES_PATH = "backend/"
 
 
 def get_current_time():
