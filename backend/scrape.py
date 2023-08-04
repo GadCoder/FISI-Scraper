@@ -57,7 +57,9 @@ def create_soup():
 
 def check_under_posts():
     soup = create_soup()
-    first_post = soup.find("div", id="tns1-item0")
+    news_items = soup.find_all("div", class_="mfp_carousel_item")
+    news_list = [item.find("h4", class_="mfp_carousel_title").find("a") for item in news_items]
+    first_post = news_list[0]
     title = remove_spaces_from_tittle(first_post.text)
     url = FISI_URL + first_post['href']
     first_post_json = transform_post_to_json(title, url)
@@ -68,7 +70,7 @@ def check_under_posts():
 def check_main_posts():
     soup = create_soup()
     carousel = soup.find("div", id="Youdeveloperslider").find("div", class_="elements")
-    slides = carousel.find("div", class_="slide")
+    slides = carousel.find_all("div", class_="slide")
     first_slide = slides[0].find("div", class_="title")
     title = remove_spaces_from_tittle(first_slide.text)
     url = FISI_URL + first_slide.find("a")['href']

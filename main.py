@@ -100,7 +100,7 @@ def update_news():
 
 
 def main():
-    check_if_jsons_exits()
+    check_if_files_exists()
     if is_daytime():
         update_news()
 
